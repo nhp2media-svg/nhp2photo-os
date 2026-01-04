@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Photo OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="hero">
+  <nav class="nav">
+    <div class="logo">AI PHOTO OS</div>
+    <div class="tag">Prompt Builder</div>
+  </nav>
+  <div class="hero-text">
+    One‑stop hub for image‑to‑image photo work
+  </div>
+</header>
+
+<main class="container">
+  <section class="builder">
+    <h2>Prompt Builder</h2>
+
+    <label>Workflow</label>
+    <select id="workflow">
+      <option value="archival">Archival / Historical</option>
+      <option value="commercial">Commercial / Editorial</option>
+    </select>
+
+    <label>Task</label>
+    <select id="task">
+      <option value="enhance">Enhance (full image)</option>
+      <option value="pose">Change angle / pose (identity‑safe)</option>
+      <option value="lighting">Lighting & color refinement</option>
+      <option value="face">Face replace (strict identity)</option>
+    </select>
+
+    <label>Target Platform</label>
+    <select id="platform">
+      <option value="general">General image‑to‑image</option>
+      <option value="chatgpt">ChatGPT Image</option>
+      <option value="gemini">Google Gemini (nano‑banana)</option>
+    </select>
+
+    <div class="checks">
+      <label><input type="checkbox" checked id="identity" /> Identity lock</label>
+      <label><input type="checkbox" checked id="grain" /> Preserve grain</label>
+      <label><input type="checkbox" checked id="nohdr" /> No HDR / cinematic</label>
+      <label><input type="checkbox" checked id="nobeauty" /> No beautification</label>
+    </div>
+
+    <button onclick="buildPrompt()">Generate Gold Standard Prompt</button>
+  </section>
+
+  <section class="output">
+    <h2>Generated Prompt</h2>
+    <textarea id="result"></textarea>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
