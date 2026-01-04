@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="NhP2 Media — Prompt Studio: refinement + face replacement prompt builders." />
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="apple-mobile-web-app-title" content="NhP2 Prompt Studio" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <title>NhP2 — Face Replace Studio</title>
+  <style>
+    :root{
+      --bg:#0b0f17;--panel:#111827;--text:#e5e7eb;--muted:#a1a1aa;
+      --accent:#60a5fa;--accent2:#34d399;--danger:#f87171;--border:rgba(255,255,255,.10);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);--radius:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    body{margin:0;background:linear-gradient(180deg,#070a12, #0b0f17 40%);color:var(--text);font-family:var(--sans);}
+    .wrap{max-width:1100px;margin:26px auto;padding:0 18px 40px;}
+    header{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px;}
+    h1{font-size:20px;margin:0;}
+    .sub{color:var(--muted);font-size:13px;line-height:1.35;margin-top:6px;max-width:780px;}
+    .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--border);background:rgba(255,255,255,.04);padding:7px 10px;border-radius:999px;color:var(--muted);font-size:12px;}
+    .warn{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.08);color:#fee2e2;font-size:12.5px;line-height:1.35;}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr;}}
+    .card{background:rgba(17,24,39,.75);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+    .card .hd{padding:14px 14px 10px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .card .hd .title{font-weight:650;font-size:13px;}
+    .card .bd{padding:14px;}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media (max-width: 620px){.row{grid-template-columns:1fr;}}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;}
+    input[type="text"], textarea, select{
+      width:100%;box-sizing:border-box;background:rgba(15,23,42,.8);
+      border:1px solid var(--border);border-radius:12px;color:var(--text);
+      padding:10px 11px;font-size:13px;outline:none;
+    }
+    textarea{min-height:86px;resize:vertical;}
+    .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:8px;}
+    .opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .opt{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);padding:9px 10px;border-radius:12px;font-size:12px;}
+    .opt input{accent-color:var(--accent);}
+    .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    button{
+      border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);
+      padding:10px 12px;border-radius:12px;font-size:13px;cursor:pointer;
+    }
+    button.primary{background:rgba(96,165,250,.18);border-color:rgba(96,165,250,.35);}
+    button.good{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.35);}
+    button.danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);}
+    button:hover{filter:brightness(1.08);}
+    pre{
+      margin:0;padding:14px;border-radius:14px;border:1px solid var(--border);
+      background:rgba(0,0,0,.28);white-space:pre-wrap;word-wrap:break-word;
+      font-family:var(--mono);font-size:12.4px;line-height:1.45;color:#e8eefc;
+    }
+    .hint{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 620px){.twoCol{grid-template-columns:1fr;}}
+    .mini{font-size:11.5px;color:var(--muted);}
+    .kbd{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:3px 7px;color:var(--text);}
+    .sep{height:1px;background:var(--border);margin:12px 0;}
+    .footer{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.45;}
+    .toast{display:none;margin-top:10px;padding:9px 10px;border-radius:12px;border:1px solid rgba(52,211,153,.35);background:rgba(52,211,153,.10);color:#d1fae5;font-size:12.5px;}
+    .toast.show{display:block;}
+  
+
+/* v3 additions */
+.tabs{display:flex;gap:10px;margin:14px 0 0 0;flex-wrap:wrap}
+.tab{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);
+  padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:700}
+.tab[aria-selected="true"]{background:rgba(96,165,250,.16);border-color:rgba(96,165,250,.35)}
+.hidden{display:none!important}
+.presetbar{display:flex;flex-wrap:wrap;gap:10px}
+.btn.preset{font-weight:700}
+.card-h{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
+.card-h .sub{color:var(--muted);font-size:13px}
+</style>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>NhP2 Media — Prompt Studio</h1>
+        <div class="sub">
+          If nothing changes when you click buttons, you are probably viewing this file in an iPhone preview (Quick Look), which often blocks scripts.
+          Open it in a real browser: <span class="kbd">Share → Open in Safari</span> or <span class="kbd">Open in Browser</span>.
+        </div>
+        <div class="warn">
+          iPhone note: If you tap the HTML inside the Files app and it opens as a “preview” (no address bar), scripts may not run. Use <b>Share → Open in Safari</b>.
+        </div>
+      </div>
+      <div class="pill" title="No backend. Your data stays in your browser.">
+        <span>Static HTML</span><span style="opacity:.6">•</span><span>Auto-updates</span>
+      </div>
+    </header>
+
+      <section class="card" aria-label="Presets">
+        <div class="card-h">
+          <div>
+            <h2 style="margin:0 0 4px 0;">Presets</h2>
+            <p class="sub" style="margin:0;">One-tap starting points. You can tweak anything after.</p>
+          </div>
+          <div class="pill">Save time</div>
+        </div>
+        <div class="presetbar">
+          <button class="btn preset" data-preset="refine_white">Refine: Clean white studio</button>
+          <button class="btn preset" data-preset="refine_cine">Refine: Cinematic on white</button>
+          <button class="btn preset" data-preset="refine_nonskin">Refine: Pass 2 non-skin only</button>
+          <button class="btn preset" data-preset="face_wet">Face Replace: Wet/ocean scene</button>
+          <button class="btn preset" data-preset="face_strict">Face Replace: Strict identity lock</button>
+        </div>
+      </section>
+
+
+    <nav class="tabs" aria-label="Tools">
+      <button class="tab" id="tab_refine" data-tab="refine">Refine / Enhance</button>
+      <button class="tab" id="tab_face" data-tab="face">Face Replace</button>
+    </nav>
+
+    <main>
+      <div id="panel_refine">
+
+        <section class="card" aria-labelledby="refineTitle">
+          <div class="card-h">
+            <div>
+              <h2 id="refineTitle" style="margin:0 0 4px 0;">Refinement — Full-Frame Enhancement</h2>
+              <p class="sub" style="margin:0;">Generate Pass 1 (full-frame grade) and Pass 2 (non-skin tighten) prompts. No framing changes; locks protect identity/teeth/eyes/skin tone.</p>
+            </div>
+            <div class="pill">Pipeline: Pass 1 + Pass 2</div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="r_style">Look</label>
+              <select id="r_style">
+                <option value="clean_white">Clean white studio (e-comm / portfolio)</option>
+                <option value="cinematic_white">Cinematic on white (high contrast)</option>
+                <option value="neutral_grade">Neutral realism (soft contrast)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="r_shadow">Shadow handling</label>
+              <select id="r_shadow">
+                <option value="barely">Remove shadow (keep ultra-soft grounding)</option>
+                <option value="soft">Keep soft studio shadow</option>
+                <option value="none">No visible shadow</option>
+              </select>
+            </div>
+
+            <div class="field col-2">
+              <label for="r_notes">Notes (optional)</label>
+              <input id="r_notes" type="text" placeholder="e.g., keep background pure #FFFFFF; do not brighten skin; preserve eye color" />
+            </div>
+          </div>
+
+          <div class="opts">
+            <label class="chk"><input type="checkbox" id="r_lockFraming" checked> Preserve original framing (no crop/zoom/reframe)</label>
+            <label class="chk"><input type="checkbox" id="r_lockIdentity" checked> Lock identity & facial geometry</label>
+            <label class="chk"><input type="checkbox" id="r_lockTeeth" checked> Lock teeth (no shape/whiteness changes)</label>
+            <label class="chk"><input type="checkbox" id="r_lockEyes" checked> Lock eye color (enhance texture/catchlights only)</label>
+            <label class="chk"><input type="checkbox" id="r_lockSkinColor" checked> Lock skin tone + WB to original source (neutral)</label>
+            <label class="chk"><input type="checkbox" id="r_noBeautify" checked> No beautification / no body reshaping</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="r_gen1">Generate Pass 1</button>
+            <button class="btn" id="r_gen2">Generate Pass 2</button>
+            <button class="btn primary" id="r_genAll">Generate Both</button>
+            <button class="btn ghost" id="r_copy">Copy output</button>
+            <button class="btn ghost" id="r_reset">Reset</button>
+          </div>
+
+          <div class="out">
+            <label>Output</label>
+            <textarea id="r_out" rows="10" placeholder="Your generated prompt will appear here…"></textarea>
+            <div class="hint">Tip: Run Pass 1 first. Only run Pass 2 if you need a surgical tighten on non-skin elements.</div>
+          </div>
+        </section>
+
+      </div>
+      <div id="panel_face" class="hidden">
+
+        <section class="card" aria-labelledby="faceTitle">
+          <div class="card-h">
+            <div>
+              <h2 id="faceTitle" style="margin:0 0 4px 0;">Face Replacement + Refinement</h2>
+              <p class="sub" style="margin:0;">Use this for face replacement with angle + lighting/color match. Built from your working v2 generator.</p>
+            </div>
+            <div class="pill">v2 generator</div>
+          </div>
+        </section>
+
+
+
+    <div class="grid">
+      <div class="card">
+        <div class="hd">
+          <div class="title">Inputs</div>
+          <div class="mini">Target:
+            <select id="targetModel" style="width:auto;padding:6px 10px;border-radius:10px">
+              <option value="chatgpt" selected>ChatGPT</option>
+              <option value="nanobanana">Google Nano Banana Pro</option>
+            </select>
+          </div>
+        </div>
+        <div class="bd">
+
+          <div class="row">
+            <div>
+              <label>Base image description (scene/body to keep)</label>
+              <input id="baseDesc" type="text" value="the image where I am in the ocean/water with sun flare" />
+              <div class="small">Describe what it is (ocean shot, studio full-body, etc.). If asked, you’ll say: “Use the ocean photo as base; studio headshot as identity.”</div>
+            </div>
+            <div>
+              <label>Identity source description (face to use)</label>
+              <input id="idDesc" type="text" value="the image where my face is a clean studio headshot on a white background" />
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="twoCol">
+            <div>
+              <label>Angle mismatch</label>
+              <select id="angleMismatch">
+                <option value="low">Low (similar angles)</option>
+                <option value="med" selected>Medium (needs re-pose)</option>
+                <option value="high">High (needs 3D reconstruction)</option>
+              </select>
+            </div>
+            <div>
+              <label>Color / lighting mismatch</label>
+              <select id="colorMismatch">
+                <option value="low">Low</option>
+                <option value="med" selected>Medium</option>
+                <option value="high">High (strong grade difference)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="opts">
+            <div class="opt"><input id="keepFraming" type="checkbox" checked /> <span>Keep base framing / background unchanged</span></div>
+            <div class="opt"><input id="wetness" type="checkbox" checked /> <span>Scene has water / wetness integration</span></div>
+            <div class="opt"><input id="noBeautify" type="checkbox" checked /> <span>No beautification</span></div>
+            <div class="opt"><input id="lockTeeth" type="checkbox" checked /> <span>Lock teeth</span></div>
+            <div class="opt"><input id="lockEyes" type="checkbox" checked /> <span>Lock eye color/brightness</span></div>
+            <div class="opt"><input id="skinToneLock" type="checkbox" checked /> <span>Lock skin tone to base body</span></div>
+            <div class="opt"><input id="noGlobalColor" type="checkbox" checked /> <span>No global color shifts</span></div>
+            <div class="opt"><input id="addIrisDef" type="checkbox" checked /> <span>Enhance iris definition (no color change)</span></div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row">
+            <div>
+              <label>Extra locks (optional)</label>
+              <textarea id="extraLocks" placeholder="Example: hat, tattoos, body proportions, background, expression, beard outline.">hat/cap, tattoos, body proportions/pose, background, expression, beard outline</textarea>
+            </div>
+            <div>
+              <label>Priority if there’s a tradeoff</label>
+              <select id="priority">
+                <option value="identity" selected>Identity accuracy (avoid drift)</option>
+                <option value="blend">Blend realism (lighting match)</option>
+                <option value="balanced">Balanced</option>
+              </select>
+              <div class="small">If you get new teeth/eyes: keep <b>Identity accuracy</b> and keep locks on.</div>
+            </div>
+          </div>
+
+          <div class="btnbar">
+            <button class="primary" id="genAll">Pass 1 + Pass 2</button>
+            <button class="good" id="genPass1">Pass 1 only</button>
+            <button id="genPass2">Pass 2 only</button>
+            <button class="danger" id="reset">Reset</button>
+          </div>
+
+          <div class="footer">
+            Auto-update is ON — changing fields updates output immediately. Buttons just switch which pass you’re viewing.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div class="title">Output</div>
+          <div class="mini">
+            <button id="copyOut" class="primary" title="Copy prompt">Copy</button>
+          </div>
+        </div>
+        <div class="bd">
+          <pre id="out"></pre>
+          
+          <div class="hint">
+            If copy doesn’t work on iOS: tap and hold inside the output text → Select All → Copy.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="card">
+      <div class="hd">
+        <div class="title">Selection / Brush add-on (optional)</div>
+        <div class="mini">For seam-only fixes / targeted enhancement</div>
+      </div>
+      <div class="bd">
+        <div class="row">
+          <div>
+            <label>Selected Area</label>
+            <select id="selTarget">
+              <option value="seam" selected>Face/Neck Seam (blend only)</option>
+              <option value="beard">Beard strands (no shape change)</option>
+              <option value="eyes">Eyes (iris texture/catchlights only)</option>
+              <option value="background">Background (uniform white)</option>
+            </select>
+          </div>
+          <div>
+            <label>Intensity</label>
+            <select id="selIntensity">
+              <option value="subtle">Subtle</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="strong">Strong</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btnbar">
+          <button id="copySelection" class="primary">Copy Selection Prompt</button>
+        </div>
+
+        <div class="small">
+          Use this only after you brush/select an area in your editor. This is the most reliable way to avoid identity drift.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Best practice: run Pass 1 once. Only run Pass 2 if you see a seam/halo or noise mismatch. Otherwise, stop — repeated passes increase drift risk.
+    </div>
+  </div>
+
+
+      </div>
+    </main>
+    <footer class="foot">
+      <div class="hint">Ethics note: Use face replacement only with consent and for lawful, non-deceptive purposes.</div>
+    </footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script>
+
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const getVal = (id)=>$(id).value;
+  const isOn = (id)=>$(id).checked;
+
+  function angleLine(level){
+    if(level==="low") return "ANGLE MATCH: Minor adjustment only—match base head angle naturally.";
+    if(level==="high") return "ANGLE / PERSPECTIVE (CRITICAL): Reconstruct/repose the identity face to match the base head angle (yaw/pitch/roll) and perspective using 3D warp—do not paste flat.";
+    return "ANGLE / PERSPECTIVE (CRITICAL): Repose the identity face to match the base head angle (yaw/pitch/roll) and perspective—do not paste flat.";
+  }
+
+  function colorLine(level){
+    if(level==="low") return "LIGHT + COLOR MATCH: Match exposure/white balance/contrast to the base image so the face blends with the body.";
+    if(level==="high") return "LIGHT + COLOR MATCH (CRITICAL): Strong mismatch—match the inserted face to the base exposure, white balance, contrast, and grade; match highlight placement and shadow softness.";
+    return "LIGHT + COLOR MATCH (CRITICAL): Match the inserted face to the base exposure, white balance, contrast, and grade; match highlight placement and shadow softness.";
+  }
+
+  function priorityLine(p){
+    if(p==="blend") return "If there is any tradeoff, prioritize realism of integration and lighting/grade match while keeping identity recognizable.";
+    if(p==="balanced") return "If there is any tradeoff, keep a balanced priority between identity accuracy and lighting/grade match.";
+    return "If there is any tradeoff, prioritize identity accuracy and locked features over all other instructions.";
+  }
+
+  function buildLocks(){
+    const locks = [];
+    const extra = (getVal("extraLocks")||"").trim();
+    if(isOn("lockTeeth")) locks.push("- Teeth locked: no changes to tooth shape, spacing, edges, alignment, or whiteness (no whitening/veneers).");
+    if(isOn("lockEyes")) locks.push("- Eyes locked: no change to iris hue/saturation/brightness; no pupil size change; preserve sclera.");
+    if(isOn("skinToneLock")) locks.push("- Skin tone locked: match the base body’s skin hue/saturation/exposure exactly (no brightening to fit background).");
+    if(isOn("noBeautify")) locks.push("- No beautification: no face slimming, no skin smoothing, no cosmetic retouching.");
+    if(isOn("noGlobalColor")) locks.push("- No global color shifts: do not alter the entire image’s grade; match only the inserted face to the base.");
+    if(extra) locks.push("- Do NOT change: " + extra + ".");
+    return locks.length ? ("LOCKS / NEGATIVE:\n" + locks.join("\n")) : "";
+  }
+
+  function irisLine(){
+    if(!isOn("addIrisDef")) return "";
+    return "EYES (DETAIL WITHOUT COLOR CHANGE): Increase only perceived iris texture definition and catchlight crispness via micro-contrast within existing tones. Do NOT change eye color, brightness, or saturation.";
+  }
+
+  function wetnessLine(){
+    if(!isOn("wetness")) return "";
+    return "SCENE INTEGRATION (WETNESS): Add subtle realistic wet specular highlights and a few micro-droplets consistent with the base lighting (light, not exaggerated) — without changing facial features.";
+  }
+
+  function pass1Text(){
+    const base = (getVal("baseDesc")||"the base image").trim();
+    const id = (getVal("idDesc")||"the identity source image").trim();
+
+    const open = "EDIT THE PROVIDED IMAGES AS ONE PHOTOREALISTIC COMPOSITE.";
+
+    const framing = isOn("keepFraming")
+      ? "BASE IMAGE: " + base + " (keep this image’s framing, body, background, lighting direction, and color grade unchanged)."
+      : "BASE IMAGE: " + base + ".";
+
+    const identity = "IDENTITY SOURCE: " + id + " (use this only for the person’s exact identity).";
+
+    const swap = "Replace ONLY the face in the base image with the face from the identity source, preserving exact identity (facial structure, eyes, nose, lips, jawline, beard shape).";
+
+    const angle = angleLine(getVal("angleMismatch"));
+    const color = colorLine(getVal("colorMismatch"));
+    const iris = irisLine();
+    const wet = wetnessLine();
+    const integ = "INTEGRATION (CRITICAL): Seamless blend at hairline/temples/jaw/neck. Match base sharpness, grain/noise, and depth-of-field. No halos.";
+
+    const prio = priorityLine(getVal("priority"));
+    const locks = buildLocks();
+
+    return [open, framing, identity, swap, angle, color, iris, wet, integ, prio, locks].filter(Boolean).join("\n\n");
+  }
+
+  function pass2Text(){
+    const base = (getVal("baseDesc")||"the base image").trim();
+    const head = "REFINE THE COMPOSITE WITHOUT ANY FRAMING CHANGES.";
+    const body =
+"Refine ONLY the following, and do not change anything else:\n" +
+"- jaw/neck/temple edge blending (remove halo)\n" +
+"- color match at the seam (match base exposure/white balance)\n" +
+"- noise/grain and sharpness match to the base image\n\n" +
+"Do NOT change facial features, expression, teeth, eye color/brightness, skin texture, or the overall grade. No global adjustments. Keep the base scene (" + base + ") unchanged.";
+    return head + "\n\n" + body;
+  }
+
+  function selectionPrompt(){
+    const t = getVal("selTarget");
+    const intensity = getVal("selIntensity");
+    const strength = (intensity==="subtle") ? "very lightly" : (intensity==="strong") ? "strongly but controlled" : "moderately";
+    const header = "EDIT ONLY THE SELECTED AREA. Do not change anything outside the selection (no global color/exposure changes, no facial feature drift).";
+    const map = {
+      seam: `${header}\n\nSEAM ONLY: Improve blend ${strength}. Remove halo, match color/exposure to surrounding skin, and match grain/sharpness to the base image. Do NOT alter face geometry, teeth, eyes, or skin texture.`,
+      beard: `${header}\n\nBEARD ONLY: Increase beard strand separation ${strength} without changing beard shape/outline or density pattern. No face reshaping. No color shifts.`,
+      eyes: `${header}\n\nEYES ONLY: Keep eye color/brightness locked. Increase only perceived iris texture detail and catchlight crispness via micro-contrast within existing tones. Do NOT brighten, saturate, or change hue; no pupil change.`,
+      background: `${header}\n\nBACKGROUND ONLY: Make selected background pure uniform #FFFFFF with no gradient/vignette. Do NOT change the subject. Shadow remains extremely faint and ultra-soft.`
+    };
+    return map[t] || map.seam;
+  }
+
+  function setOut(text){ $("out").textContent = text; }
+
+  function showToast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1200);
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Copied.");
+    }catch(e){
+      showToast("Copy blocked on iOS. Tap-hold output to copy manually.");
+    }
+  }
+
+  function saveState(){
+    const ids = ["targetModel","baseDesc","idDesc","angleMismatch","colorMismatch","keepFraming","wetness","noBeautify","lockTeeth","lockEyes","skinToneLock","noGlobalColor","addIrisDef","extraLocks","priority","selTarget","selIntensity"];
+    const state = {};
+    ids.forEach(id=>{
+      const el = $(id);
+      state[id] = (el.type==="checkbox") ? el.checked : el.value;
+    });
+    localStorage.setItem("promptStudioStateV2", JSON.stringify(state));
+  }
+
+  function loadState(){
+    const raw = localStorage.getItem("promptStudioStateV2");
+    if(!raw) return;
+    try{
+      const s = JSON.parse(raw);
+      Object.keys(s).forEach(id=>{
+        const el = $(id);
+        if(!el) return;
+        if(el.type==="checkbox") el.checked = !!s[id];
+        else el.value = s[id];
+      });
+    }catch(e){}
+  }
+
+  // output mode
+  let mode = "all"; // all | p1 | p2
+  function render(){
+    const p1 = pass1Text();
+    const p2 = pass2Text();
+    if(mode==="p1") setOut(p1);
+    else if(mode==="p2") setOut(p2);
+    else setOut(p1 + "\n\n— — —\n\n" + p2);
+  }
+
+  function bindAuto(){
+    const ids = ["targetModel","baseDesc","idDesc","angleMismatch","colorMismatch","keepFraming","wetness","noBeautify","lockTeeth","lockEyes","skinToneLock","noGlobalColor","addIrisDef","extraLocks","priority"];
+    ids.forEach(id=>{
+      const el = $(id);
+      el.addEventListener("change", ()=>{ saveState(); render(); });
+      el.addEventListener("input", ()=>{ saveState(); render(); });
+    });
+  }
+
+  $("genAll").addEventListener("click", ()=>{ mode="all"; render(); });
+  $("genPass1").addEventListener("click", ()=>{ mode="p1"; render(); });
+  $("genPass2").addEventListener("click", ()=>{ mode="p2"; render(); });
+  $("copyOut").addEventListener("click", ()=> copyText($("out").textContent));
+  $("copySelection").addEventListener("click", ()=> copyText(selectionPrompt()));
+  $("reset").addEventListener("click", ()=>{
+    localStorage.removeItem("promptStudioStateV2");
+    location.reload();
+  });
+
+  loadState();
+  bindAuto();
+  render();
+})();
+
+</script>
+  <script>
+
+(function(){
+  const qs = (id)=>document.getElementById(id);
+
+  // Simple toast (not dependent on v2 script scope)
+  function showToast(msg){
+    const t = qs("toast");
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(()=>t.classList.remove("show"), 1800);
+  }
+
+  // Tabs
+  const panelRefine = qs("panel_refine");
+  const panelFace = qs("panel_face");
+  const tabRefine = qs("tab_refine");
+  const tabFace = qs("tab_face");
+
+  function setTab(tab){
+    if(!panelRefine || !panelFace || !tabRefine || !tabFace) return;
+    panelRefine.classList.toggle("hidden", tab !== "refine");
+    panelFace.classList.toggle("hidden", tab !== "face");
+    tabRefine.setAttribute("aria-selected", tab === "refine" ? "true" : "false");
+    tabFace.setAttribute("aria-selected", tab === "face" ? "true" : "false");
+    try{ localStorage.setItem("nhp2_tab", tab); }catch(e){}
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  if(tabRefine) tabRefine.addEventListener("click", ()=>setTab("refine"));
+  if(tabFace) tabFace.addEventListener("click", ()=>setTab("face"));
+
+  // Refinement generator state
+  const r = {
+    style: qs("r_style"),
+    shadow: qs("r_shadow"),
+    notes: qs("r_notes"),
+    lockFraming: qs("r_lockFraming"),
+    lockIdentity: qs("r_lockIdentity"),
+    lockTeeth: qs("r_lockTeeth"),
+    lockEyes: qs("r_lockEyes"),
+    lockSkinColor: qs("r_lockSkinColor"),
+    noBeautify: qs("r_noBeautify"),
+    out: qs("r_out"),
+    gen1: qs("r_gen1"),
+    gen2: qs("r_gen2"),
+    genAll: qs("r_genAll"),
+    copy: qs("r_copy"),
+    reset: qs("r_reset"),
+  };
+
+  const stateKey = "nhp2_refine_state_v1";
+  const defaults = {
+    style:"clean_white",
+    shadow:"barely",
+    notes:"",
+    lockFraming:true,
+    lockIdentity:true,
+    lockTeeth:true,
+    lockEyes:true,
+    lockSkinColor:true,
+    noBeautify:true
+  };
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(stateKey);
+      if(!raw) return {...defaults};
+      return {...defaults, ...JSON.parse(raw)};
+    }catch(e){
+      return {...defaults};
+    }
+  }
+  function save(s){
+    try{ localStorage.setItem(stateKey, JSON.stringify(s)); }catch(e){}
+  }
+  function getState(){
+    return {
+      style: r.style ? r.style.value : defaults.style,
+      shadow: r.shadow ? r.shadow.value : defaults.shadow,
+      notes: (r.notes ? r.notes.value : "").trim(),
+      lockFraming: !!(r.lockFraming && r.lockFraming.checked),
+      lockIdentity: !!(r.lockIdentity && r.lockIdentity.checked),
+      lockTeeth: !!(r.lockTeeth && r.lockTeeth.checked),
+      lockEyes: !!(r.lockEyes && r.lockEyes.checked),
+      lockSkinColor: !!(r.lockSkinColor && r.lockSkinColor.checked),
+      noBeautify: !!(r.noBeautify && r.noBeautify.checked)
+    };
+  }
+  function hydrate(s){
+    if(r.style) r.style.value = s.style;
+    if(r.shadow) r.shadow.value = s.shadow;
+    if(r.notes) r.notes.value = s.notes || "";
+    if(r.lockFraming) r.lockFraming.checked = !!s.lockFraming;
+    if(r.lockIdentity) r.lockIdentity.checked = !!s.lockIdentity;
+    if(r.lockTeeth) r.lockTeeth.checked = !!s.lockTeeth;
+    if(r.lockEyes) r.lockEyes.checked = !!s.lockEyes;
+    if(r.lockSkinColor) r.lockSkinColor.checked = !!s.lockSkinColor;
+    if(r.noBeautify) r.noBeautify.checked = !!s.noBeautify;
+  }
+
+  function pass1(s){
+    const L = [];
+    L.push("EDIT THE PROVIDED IMAGE. Preserve the ORIGINAL aspect ratio and ORIGINAL FRAMING exactly (no crop/zoom/reframe). Do not rotate, extend canvas, or recompose. This is a full-frame edit of the existing image.");
+    L.push("");
+    L.push("LOCKED FEATURES (CRITICAL):");
+    if(s.lockIdentity) L.push("- Preserve identity exactly: no changes to facial structure, eyes, nose, lips, jawline, expression, or beard shape.");
+    if(s.lockTeeth) L.push("- Teeth are locked: do not change tooth shape, spacing, alignment, edges, or whiteness. No dental edits.");
+    if(s.lockEyes) L.push("- Eyes: color is locked (match the original exactly). Enhance only iris texture/catchlights within existing tones. No pupil changes.");
+    if(s.noBeautify) L.push("- No beautification or body reshaping: keep proportions, muscle definition, and pose unchanged. No smoothing/cosmetic edits.");
+    L.push("- Tattoos are locked: do not alter design or placement.");
+    L.push("");
+    if(s.lockSkinColor){
+      L.push("COLOR + EXPOSURE LOCK (CRITICAL): Match skin tone to the ORIGINAL source image exactly. Keep white balance neutral (no warming/cooling). Do not brighten/darken skin or lift midtones. Keep saturation/hue unchanged. Do NOT compensate for the white background by changing skin.");
+      L.push("");
+    }
+    if(s.style === "cinematic_white"){
+      L.push("Apply a hyper-realistic cinematic lighting/tonal grade to the ENTIRE frame (not face-only): high-contrast studio key light with clean deep shadows and crisp controlled highlights, realistic dynamic range, and natural texture without smoothing. Maintain deep depth of field (even focus across the subject; no shallow DoF).");
+    }else if(s.style === "neutral_grade"){
+      L.push("Apply a neutral realism upgrade: accurate dynamic range, gentle contrast, and natural texture. Maintain deep depth of field and avoid halos/over-sharpening.");
+    }else{
+      L.push("Increase realistic micro-detail and clarity across the ENTIRE frame while staying photographic: crisp fabric/tattoo detail, natural hair definition, realistic skin texture (no plastic smoothing). Maintain deep depth of field (even focus across the subject).");
+    }
+    L.push("");
+    L.push("BACKGROUND: Pure uniform white (#FFFFFF) edge-to-edge. NO vignette, NO gradient, NO corner darkening, NO spotlight falloff.");
+    L.push("");
+    if(s.shadow === "none"){
+      L.push("SHADOW: Remove visible cast shadow entirely.");
+    }else if(s.shadow === "soft"){
+      L.push("SHADOW: Keep a soft studio shadow that is subtle and natural (no hard edge).");
+    }else{
+      L.push("SHADOW: Remove nearly all cast shadow; allow only a faint, ultra-soft grounding shadow (barely visible).");
+    }
+    L.push("");
+    L.push("NEGATIVE: no face-only sharpening, no blur on torso/jeans, no stylization, no added muscles, no beauty retouching.");
+    if(s.notes){
+      L.push("");
+      L.push("NOTES:");
+      L.push(s.notes);
+    }
+    return L.join("\n");
+  }
+
+  function pass2(s){
+    const L = [];
+    L.push("REFINE THE PROVIDED IMAGE WITHOUT ANY FRAMING CHANGES. Preserve the ORIGINAL aspect ratio and ORIGINAL FRAMING exactly (no crop/zoom/reframe).");
+    L.push("");
+    L.push("LOCKED FEATURES (CRITICAL):");
+    L.push("- Preserve identity exactly. Teeth locked (no changes). Eye color locked (match original exactly).");
+    L.push("- No body reshaping. Tattoos/clothing/pose unchanged.");
+    L.push("");
+    L.push("SKIN PIXELS LOCK (CRITICAL): Do not modify skin pixels. No pores/freckles/redness/speckling/micro-contrast. No clarity/sharpening on skin.");
+    if(s.lockSkinColor){
+      L.push("");
+      L.push("COLOR + EXPOSURE LOCK (CRITICAL): Match skin tone/WB/exposure to the ORIGINAL source exactly. Do not brighten/darken/warm/cool/lift midtones on skin.");
+    }
+    L.push("");
+    L.push("DETAIL TARGETS (NON-SKIN ONLY): denim weave/seams/rips; tattoo edge sharpness (edges only, no redesign); hat fabric texture; beard strand definition (no outline change).");
+    L.push("");
+    L.push("BACKGROUND: Pure #FFFFFF with no vignette/gradient. Shadow extremely faint and ultra-soft.");
+    L.push("");
+    L.push("NEGATIVE: no halos, no harsh edge outlines, no oversharpening.");
+    if(s.notes){
+      L.push("");
+      L.push("NOTES:");
+      L.push(s.notes);
+    }
+    return L.join("\n");
+  }
+
+  function bind(){
+    if(!r.gen1 || !r.gen2 || !r.genAll || !r.copy || !r.reset || !r.out) return;
+
+    const update = ()=>{
+      const s = getState();
+      save(s);
+    };
+    ["change","input"].forEach(evt=>{
+      [r.style,r.shadow,r.notes,r.lockFraming,r.lockIdentity,r.lockTeeth,r.lockEyes,r.lockSkinColor,r.noBeautify]
+        .forEach(el=>{ if(el) el.addEventListener(evt, update); });
+    });
+
+    r.gen1.addEventListener("click", ()=>{
+      const s = getState(); save(s);
+      r.out.value = pass1(s);
+      showToast("Pass 1 generated.");
+    });
+    r.gen2.addEventListener("click", ()=>{
+      const s = getState(); save(s);
+      r.out.value = pass2(s);
+      showToast("Pass 2 generated.");
+    });
+    r.genAll.addEventListener("click", ()=>{
+      const s = getState(); save(s);
+      r.out.value = "PASS 1:\n\n"+pass1(s)+"\n\n---\n\nPASS 2:\n\n"+pass2(s);
+      showToast("Both passes generated.");
+    });
+    r.copy.addEventListener("click", async ()=>{
+      try{
+        await navigator.clipboard.writeText(r.out.value || "");
+        showToast("Copied.");
+      }catch(e){
+        const ta=document.createElement("textarea");
+        ta.value=r.out.value||""; document.body.appendChild(ta);
+        ta.select(); document.execCommand("copy"); ta.remove();
+        showToast("Copied.");
+      }
+    });
+    r.reset.addEventListener("click", ()=>{
+      save({...defaults});
+      hydrate({...defaults});
+      r.out.value="";
+      showToast("Reset.");
+    });
+  }
+
+  // Presets
+  function applyPreset(name){
+    if(name==="refine_white"){ setTab("refine"); const s=load(); s.style="clean_white"; s.shadow="barely"; save(s); hydrate(s); r.out.value = pass1(s); showToast("Preset applied."); return; }
+    if(name==="refine_cine"){ setTab("refine"); const s=load(); s.style="cinematic_white"; s.shadow="barely"; save(s); hydrate(s); r.out.value = pass1(s); showToast("Preset applied."); return; }
+    if(name==="refine_nonskin"){ setTab("refine"); const s=load(); save(s); hydrate(s); r.out.value = pass2(s); showToast("Preset applied."); return; }
+    if(name==="face_wet"){ setTab("face"); try{ qs("wetness").checked=true; qs("angleMismatch").value="Medium (needs re-pose)"; qs("colorMismatch").value="Medium"; }catch(e){} showToast("Preset applied."); return; }
+    if(name==="face_strict"){ setTab("face"); try{ qs("lockEyes").checked=true; qs("lockTeeth").checked=true; }catch(e){} showToast("Preset applied."); return; }
+  }
+  document.querySelectorAll("[data-preset]").forEach(btn=>{
+    btn.addEventListener("click", ()=>applyPreset(btn.getAttribute("data-preset")));
+  });
+
+  // Init
+  const s0 = load(); hydrate(s0); bind();
+  const savedTab = (function(){ try{return localStorage.getItem("nhp2_tab")}catch(e){return null} })();
+  setTab(savedTab || "refine");
+})();
+
+</script>
+</body>
+</html>

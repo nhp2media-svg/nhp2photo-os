@@ -3,172 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Photo OS — NhP2</title>
+  <title>NhP2 Media — Pocket Cinema Suite</title>
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero" id="home">
-    <img class="hero-bg" src="assets/header.jpg" alt="" />
-    <div class="hero-overlay"></div>
+<header class="hero" id="home">
+  <img class="hero-bg" src="assets/header.jpg" alt="" />
+  <div class="hero-overlay"></div>
 
-    <nav class="topbar">
-      <div class="brand">
-        <img class="brand-logo" src="assets/logo.png" alt="NhP2" />
-        <div class="brand-meta">
-          <div class="brand-title">AI Photo OS</div>
-          <div class="brand-sub">Commercial / Editorial • Archival • Identity-Safe</div>
-        </div>
-      </div>
-
-      <div class="navlinks">
-        <a href="#home">Home</a>
-        <a href="#builder">Builder</a>
-        <a href="#library">Library</a>
-        <a href="#decision">Decision Flow</a>
-        <a href="#lint">Prompt Lint</a>
-      </div>
-    </nav>
-
-    <div class="hero-content">
-      <h1>One-stop command center for photo AI</h1>
-      <p>
-        Build model-ready image-to-image prompts that enhance realism, preserve identity, and reduce drift.
-        Designed for Flux / ChatGPT Image / Gemini and most i2i systems.
-      </p>
-      <div class="hero-badges">
-        <span class="badge">Identity Lock</span>
-        <span class="badge">Archival Mode</span>
-        <span class="badge">Editorial Polish</span>
-        <span class="badge">Drift Guard</span>
+  <nav class="topbar">
+    <div class="brand">
+      <img class="brand-logo" src="assets/logo.png" alt="NhP2" />
+      <div>
+        <div class="brand-title">Pocket Cinema Suite</div>
+        <div class="brand-sub">NhP2 Media • Prompt Tools</div>
       </div>
     </div>
-  </header>
+    <div class="navlinks">
+      <a class="active" href="index.html">Home</a>
+      <a href="pocket-cinema.html">Pocket Cinema</a>
+      <a href="ai-photo-os.html">AI Photo OS</a>
+    
+      <a href="face-replace.html">Face Replace</a></div>
+  </nav>
 
-  <main class="container">
-    <section class="card" id="builder">
-      <div class="card-head">
-        <h2>Prompt Builder</h2>
-        <p class="muted">Selections below must materially change the generated prompt. They do.</p>
-      </div>
+  <div class="hero-content">
+    <h1>One design, two tools — no more juggling</h1>
+    <p>
+      This merges the visual language of your Pocket Cinema Prompt Generator with AI Photo OS.
+      You get one consistent navigation, branding, and layout — while keeping everything static and GitHub Pages-friendly.
+    </p>
+    <div class="badges">
+      <span class="badge">Client-side only</span>
+      <span class="badge">Identity-safe prompts</span>
+      <span class="badge">LM Arena / Flux-ready</span>
+      <span class="badge">Prompt Lint</span>
+    </div>
+  </div>
+</header>
 
-      <div class="grid-2">
-        <div>
-          <label>Workflow</label>
-          <select id="wf">
-            <option value="archival">Archival / Documentary</option>
-            <option value="commercial">Commercial / Editorial</option>
-          </select>
-
-          <label>Task</label>
-          <select id="task">
-            <option value="enhance">Enhance / Restore (full image)</option>
-            <option value="lighting">Lighting + Color Balance</option>
-            <option value="texture">Skin Texture + Grain (anti-wax)</option>
-            <option value="upscale">Upscale (detail-safe)</option>
-            <option value="pose">Pose / Angle Change (identity-safe)</option>
-            <option value="face_replace">Face Replace / Composite (strict)</option>
-          </select>
-
-          <label>Platform target</label>
-          <select id="platform">
-            <option value="general">General i2i</option>
-            <option value="flux">Flux (Pro/Max/Dev/Kontext)</option>
-            <option value="chatgpt">ChatGPT Image</option>
-            <option value="gemini">Gemini Image</option>
-          </select>
-
-          <div class="checks">
-            <label class="check"><input id="lock_identity" type="checkbox" checked /> Identity lock (faces immutable)</label>
-            <label class="check"><input id="keep_grain" type="checkbox" checked /> Preserve organic grain / noise</label>
-            <label class="check"><input id="no_hdr" type="checkbox" checked /> Forbid HDR / cinematic grade</label>
-            <label class="check"><input id="no_beauty" type="checkbox" checked /> Forbid beautification / de-aging</label>
-            <label class="check"><input id="no_invent" type="checkbox" checked /> Forbid invented details / added elements</label>
-          </div>
-
-          <div id="taskOptions" class="task-options"></div>
-
-          <div class="row">
-            <button id="btnBuild" class="btn primary">Generate Gold-Standard Prompt</button>
-            <button id="btnCopy" class="btn">Copy</button>
-            <button id="btnDownload" class="btn">Download .txt</button>
-          </div>
-
-          <div class="risk">
-            <div class="risk-label">Drift Risk</div>
-            <div id="riskBadge" class="risk-badge low">Low</div>
-            <div id="riskNotes" class="muted small"></div>
-          </div>
-        </div>
-
-        <div>
-          <label>Generated prompt</label>
-          <textarea id="out" spellcheck="false" placeholder="Click Generate…"></textarea>
-          <div class="muted small">
-            Tip: For pose/angle and face-replace, start with <strong>Archival</strong>, low degrees, and compare faces side-by-side before increasing.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" id="lint">
-      <div class="card-head">
-        <h2>Prompt Lint</h2>
-        <p class="muted">Paste any prompt and get drift/hallucination warnings.</p>
-      </div>
-      <textarea id="lintIn" spellcheck="false" placeholder="Paste your prompt here…"></textarea>
+<main class="container">
+  <section class="section grid-2">
+    <div class="card">
+      <h2>Pocket Cinema — Prompt Generator</h2>
+      <p class="muted">
+        Your existing tool (nhp2media-svg.github.io) in the same design system. If embedding is blocked,
+        the page provides a direct open button.
+      </p>
       <div class="row">
-        <button id="btnLint" class="btn primary">Lint Prompt</button>
-        <button id="btnLintClear" class="btn">Clear</button>
+        <a class="btn primary" href="pocket-cinema.html">Open Pocket Cinema</a>
+        <a class="btn" href="https://nhp2media-svg.github.io/" target="_blank" rel="noopener">Open Original</a>
       </div>
-      <div id="lintOut" class="lint-out"></div>
-    </section>
+      <hr class="sep" />
+      <p class="small muted">
+        Note: If the embedded version shows blank, that means the original site blocks iframes. Use “Open Original”.
+      </p>
+    </div>
 
-    <section class="card" id="decision">
-      <div class="card-head">
-        <h2>Decision Flow</h2>
-        <p class="muted">Use this to pick the safest workflow for your goal.</p>
-      </div>
-      <ol class="flow">
-        <li><strong>Is identity sacred?</strong> If yes, enable Identity Lock and avoid face replace unless mandatory.</li>
-        <li><strong>Is it historical/archival?</strong> If yes, choose Archival mode and keep changes minimal.</li>
-        <li><strong>Need angle/pose change?</strong> Start at 10–20° max. Rebuild lighting physically. Compare faces.</li>
-        <li><strong>Seeing wax/plastic skin?</strong> Switch to Texture+Grain task, preserve pores and noise.</li>
-        <li><strong>Need resolution?</strong> Upscale last. Forbid invented micro-detail and halos.</li>
-      </ol>
-    </section>
-
-    <section class="card" id="library">
-      <div class="card-head">
-        <h2>Prompt Library</h2>
-        <p class="muted">Curated prompts (copy-ready). This is intentionally small and high quality.</p>
-      </div>
+    <div class="card">
+      <h2>AI Photo OS</h2>
+      <p class="muted">
+        Identity-safe image-to-image prompt builder with drift risk scoring, prompt lint, and curated library.
+        Built specifically for photo enhancement, texture/grain, upscale, pose/angle, and strict composites.
+      </p>
       <div class="row">
-        <select id="libMode" class="mini">
-          <option value="any">Any workflow</option>
-          <option value="archival">Archival</option>
-          <option value="commercial">Commercial</option>
-        </select>
-        <select id="libTask" class="mini">
-          <option value="any">Any task</option>
-          <option value="enhance">Enhance</option>
-          <option value="lighting">Lighting</option>
-          <option value="texture">Texture</option>
-          <option value="upscale">Upscale</option>
-          <option value="pose">Pose/Angle</option>
-          <option value="face_replace">Face Replace</option>
-        </select>
-        <button id="libApply" class="btn">Filter</button>
+        <a class="btn primary" href="ai-photo-os.html">Open AI Photo OS</a>
+        <a class="btn" href="face-replace.html">Open Face Replace</a>
+        <a class="btn" href="#how">How it works</a>
       </div>
-      <div id="libList" class="lib-list"></div>
-    </section>
+    </div>
+  </section>
 
-    <footer class="footer">
-      <div>NhP2 • AI Photo OS</div>
-      <div class="muted small">Static site. No accounts. No tracking.</div>
-    </footer>
-  </main>
+  <section class="section card" id="how">
+    <h2>How this “merge” works</h2>
+    <p class="muted">
+      We keep both tools static and separate, but unify them under one branded shell:
+    </p>
+    <ul class="muted">
+      <li>Shared header + navigation + typography + color tokens.</li>
+      <li>Pocket Cinema page embeds your existing tool (with a fallback link if embedding is blocked).</li>
+      <li>AI Photo OS runs locally as its own page, with no external JSON dependencies.</li>
+    </ul>
+  </section>
 
-  <script src="app.js"></script>
+  <div class="footer">
+    <div>© 2025–2026 Nathan Histed — NhP2 Media</div>
+    <div class="muted small">Static site • No tracking • GitHub Pages-ready</div>
+  </div>
+</main>
 </body>
 </html>
