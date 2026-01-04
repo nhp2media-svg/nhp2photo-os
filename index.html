@@ -1,81 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AI Photo OS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Photo OS — NhP2</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header class="hero" id="home">
+    <img class="hero-bg" src="assets/header.jpg" alt="" />
+    <div class="hero-overlay"></div>
 
-<header class="hero">
-  <nav class="nav">
-    <div class="brand">
-      <div class="logo">AI PHOTO OS</div>
-      <div class="tag">Editorial · Archival · Identity‑Safe</div>
+    <nav class="topbar">
+      <div class="brand">
+        <img class="brand-logo" src="assets/logo.png" alt="NhP2" />
+        <div class="brand-meta">
+          <div class="brand-title">AI Photo OS</div>
+          <div class="brand-sub">Commercial / Editorial • Archival • Identity-Safe</div>
+        </div>
+      </div>
+
+      <div class="navlinks">
+        <a href="#home">Home</a>
+        <a href="#builder">Builder</a>
+        <a href="#library">Library</a>
+        <a href="#decision">Decision Flow</a>
+        <a href="#lint">Prompt Lint</a>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <h1>One-stop command center for photo AI</h1>
+      <p>
+        Build model-ready image-to-image prompts that enhance realism, preserve identity, and reduce drift.
+        Designed for Flux / ChatGPT Image / Gemini and most i2i systems.
+      </p>
+      <div class="hero-badges">
+        <span class="badge">Identity Lock</span>
+        <span class="badge">Archival Mode</span>
+        <span class="badge">Editorial Polish</span>
+        <span class="badge">Drift Guard</span>
+      </div>
     </div>
-    <div class="nav-links">
-      <a href="#builder">Builder</a>
-      <a href="#about">About</a>
-    </div>
-  </nav>
-  <div class="hero-copy">
-    Professional image‑to‑image prompts that preserve identity, history, and realism.
-  </div>
-</header>
+  </header>
 
-<main class="container">
+  <main class="container">
+    <section class="card" id="builder">
+      <div class="card-head">
+        <h2>Prompt Builder</h2>
+        <p class="muted">Selections below must materially change the generated prompt. They do.</p>
+      </div>
 
-<section id="builder" class="panel">
-  <h2>Prompt Builder</h2>
+      <div class="grid-2">
+        <div>
+          <label>Workflow</label>
+          <select id="wf">
+            <option value="archival">Archival / Documentary</option>
+            <option value="commercial">Commercial / Editorial</option>
+          </select>
 
-  <label>Workflow</label>
-  <select id="workflow">
-    <option value="archival">Archival / Historical Preservation</option>
-    <option value="commercial">Commercial / Editorial</option>
-  </select>
+          <label>Task</label>
+          <select id="task">
+            <option value="enhance">Enhance / Restore (full image)</option>
+            <option value="lighting">Lighting + Color Balance</option>
+            <option value="texture">Skin Texture + Grain (anti-wax)</option>
+            <option value="upscale">Upscale (detail-safe)</option>
+            <option value="pose">Pose / Angle Change (identity-safe)</option>
+            <option value="face_replace">Face Replace / Composite (strict)</option>
+          </select>
 
-  <label>Primary Task</label>
-  <select id="task">
-    <option value="enhance">High‑fidelity restoration / enhancement</option>
-    <option value="pose">Change camera angle or pose (identity‑safe)</option>
-    <option value="lighting">Lighting & color correction</option>
-    <option value="face">Face replacement / composite (strict)</option>
-  </select>
+          <label>Platform target</label>
+          <select id="platform">
+            <option value="general">General i2i</option>
+            <option value="flux">Flux (Pro/Max/Dev/Kontext)</option>
+            <option value="chatgpt">ChatGPT Image</option>
+            <option value="gemini">Gemini Image</option>
+          </select>
 
-  <label>Target Platform</label>
-  <select id="platform">
-    <option value="general">General image‑to‑image model</option>
-    <option value="chatgpt">ChatGPT Image</option>
-    <option value="gemini">Google Gemini Image</option>
-  </select>
+          <div class="checks">
+            <label class="check"><input id="lock_identity" type="checkbox" checked /> Identity lock (faces immutable)</label>
+            <label class="check"><input id="keep_grain" type="checkbox" checked /> Preserve organic grain / noise</label>
+            <label class="check"><input id="no_hdr" type="checkbox" checked /> Forbid HDR / cinematic grade</label>
+            <label class="check"><input id="no_beauty" type="checkbox" checked /> Forbid beautification / de-aging</label>
+            <label class="check"><input id="no_invent" type="checkbox" checked /> Forbid invented details / added elements</label>
+          </div>
 
-  <div class="checks">
-    <label><input type="checkbox" checked id="identity"> Lock identity & facial geometry</label>
-    <label><input type="checkbox" checked id="grain"> Preserve photographic grain & texture</label>
-    <label><input type="checkbox" checked id="nohdr"> Forbid HDR / cinematic grading</label>
-    <label><input type="checkbox" checked id="nobeauty"> Forbid beautification / de‑aging</label>
-  </div>
+          <div id="taskOptions" class="task-options"></div>
 
-  <button onclick="buildPrompt()">Generate Professional Prompt</button>
-</section>
+          <div class="row">
+            <button id="btnBuild" class="btn primary">Generate Gold-Standard Prompt</button>
+            <button id="btnCopy" class="btn">Copy</button>
+            <button id="btnDownload" class="btn">Download .txt</button>
+          </div>
 
-<section class="panel output">
-  <h2>Generated Prompt</h2>
-  <textarea id="result"></textarea>
-</section>
+          <div class="risk">
+            <div class="risk-label">Drift Risk</div>
+            <div id="riskBadge" class="risk-badge low">Low</div>
+            <div id="riskNotes" class="muted small"></div>
+          </div>
+        </div>
 
-<section id="about" class="panel about">
-  <h2>About AI Photo OS</h2>
-  <p>
-    AI Photo OS is designed for serious image‑to‑image work where identity,
-    historical accuracy, and physical realism matter. It does not produce
-    stylized, invented, or beauty‑filtered imagery.
-  </p>
-</section>
+        <div>
+          <label>Generated prompt</label>
+          <textarea id="out" spellcheck="false" placeholder="Click Generate…"></textarea>
+          <div class="muted small">
+            Tip: For pose/angle and face-replace, start with <strong>Archival</strong>, low degrees, and compare faces side-by-side before increasing.
+          </div>
+        </div>
+      </div>
+    </section>
 
-</main>
+    <section class="card" id="lint">
+      <div class="card-head">
+        <h2>Prompt Lint</h2>
+        <p class="muted">Paste any prompt and get drift/hallucination warnings.</p>
+      </div>
+      <textarea id="lintIn" spellcheck="false" placeholder="Paste your prompt here…"></textarea>
+      <div class="row">
+        <button id="btnLint" class="btn primary">Lint Prompt</button>
+        <button id="btnLintClear" class="btn">Clear</button>
+      </div>
+      <div id="lintOut" class="lint-out"></div>
+    </section>
 
-<script src="app.js"></script>
+    <section class="card" id="decision">
+      <div class="card-head">
+        <h2>Decision Flow</h2>
+        <p class="muted">Use this to pick the safest workflow for your goal.</p>
+      </div>
+      <ol class="flow">
+        <li><strong>Is identity sacred?</strong> If yes, enable Identity Lock and avoid face replace unless mandatory.</li>
+        <li><strong>Is it historical/archival?</strong> If yes, choose Archival mode and keep changes minimal.</li>
+        <li><strong>Need angle/pose change?</strong> Start at 10–20° max. Rebuild lighting physically. Compare faces.</li>
+        <li><strong>Seeing wax/plastic skin?</strong> Switch to Texture+Grain task, preserve pores and noise.</li>
+        <li><strong>Need resolution?</strong> Upscale last. Forbid invented micro-detail and halos.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="library">
+      <div class="card-head">
+        <h2>Prompt Library</h2>
+        <p class="muted">Curated prompts (copy-ready). This is intentionally small and high quality.</p>
+      </div>
+      <div class="row">
+        <select id="libMode" class="mini">
+          <option value="any">Any workflow</option>
+          <option value="archival">Archival</option>
+          <option value="commercial">Commercial</option>
+        </select>
+        <select id="libTask" class="mini">
+          <option value="any">Any task</option>
+          <option value="enhance">Enhance</option>
+          <option value="lighting">Lighting</option>
+          <option value="texture">Texture</option>
+          <option value="upscale">Upscale</option>
+          <option value="pose">Pose/Angle</option>
+          <option value="face_replace">Face Replace</option>
+        </select>
+        <button id="libApply" class="btn">Filter</button>
+      </div>
+      <div id="libList" class="lib-list"></div>
+    </section>
+
+    <footer class="footer">
+      <div>NhP2 • AI Photo OS</div>
+      <div class="muted small">Static site. No accounts. No tracking.</div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
